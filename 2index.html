@@ -1,0 +1,427 @@
+앤틱과 빈티지 사진, 그리고 다양한 기능(계산기, 음악 메뉴)을 한눈에 관리할 수 있도록 요구하신 조건(연한 연두색 톤, 깔끔한 디자인, 나라별·시대별·종류별 메뉴)에 맞춰 작성한 **단일 HTML 코드**입니다.
+
+코드 전체를 복사하여 `index.html` 파일로 저장한 뒤 브라우저로 열어보시면 바로 사용하실 수 있습니다.
+
+```html
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>앤틱 & 빈티지 아카이브</title>
+    <style>
+        :root {
+            --primary-bg: #f4f8f4;
+            --secondary-bg: #e2ede2;
+            --accent-color: #729372;
+            --accent-hover: #5c785c;
+            --text-color: #333333;
+            --white: #ffffff;
+            --border-color: #d0dcd0;
+        }
+
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+            font-family: 'Malgun Gothic', sans-serif;
+        }
+
+        body {
+            background-color: var(--primary-bg);
+            color: var(--text-color);
+            display: flex;
+            height: 100vh;
+            overflow: hidden;
+        }
+
+        /* 사이드바 메뉴 */
+        sidebar {
+            width: 260px;
+            background-color: var(--secondary-bg);
+            border-right: 1px solid var(--border-color);
+            display: flex;
+            flex-direction: column;
+            padding: 20px;
+        }
+
+        .logo {
+            font-size: 1.2rem;
+            font-weight: bold;
+            color: var(--accent-hover);
+            margin-bottom: 30px;
+            text-align: center;
+            letter-spacing: 1px;
+        }
+
+        .menu-section {
+            margin-bottom: 20px;
+        }
+
+        .menu-title {
+            font-size: 0.9rem;
+            font-weight: bold;
+            color: var(--accent-hover);
+            margin-bottom: 8px;
+            text-transform: uppercase;
+        }
+
+        .menu-list {
+            list-style: none;
+            padding-left: 10px;
+        }
+
+        .menu-list li {
+            margin-bottom: 6px;
+        }
+
+        .menu-list a {
+            text-decoration: none;
+            color: var(--text-color);
+            font-size: 0.95rem;
+            transition: color 0.2s;
+            display: block;
+            padding: 4px 6px;
+            border-radius: 4px;
+        }
+
+        .menu-list a:hover {
+            background-color: var(--accent-color);
+            color: var(--white);
+        }
+
+        /* 메인 콘텐츠 영역 */
+        main {
+            flex: 1;
+            display: flex;
+            flex-direction: column;
+            overflow-y: auto;
+        }
+
+        header {
+            background-color: var(--white);
+            padding: 20px 30px;
+            border-bottom: 1px solid var(--border-color);
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        header h1 {
+            font-size: 1.5rem;
+            color: var(--accent-hover);
+        }
+
+        .content-body {
+            padding: 30px;
+            display: grid;
+            grid-template-columns: 2fr 1fr;
+            gap: 20px;
+        }
+
+        .card {
+            background-color: var(--white);
+            border: 1px solid var(--border-color);
+            border-radius: 8px;
+            padding: 20px;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.02);
+            margin-bottom: 20px;
+        }
+
+        .card h3 {
+            margin-bottom: 15px;
+            color: var(--accent-hover);
+            font-size: 1.1rem;
+            border-bottom: 2px solid var(--primary-bg);
+            padding-bottom: 8px;
+        }
+
+        /* 사진갤러리 그리드 */
+        .photo-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(140px, 1fr));
+            gap: 15px;
+        }
+
+        .photo-item {
+            background-color: var(--primary-bg);
+            border: 1px solid var(--border-color);
+            border-radius: 6px;
+            overflow: hidden;
+            text-align: center;
+        }
+
+        .photo-placeholder {
+            width: 100%;
+            height: 110px;
+            background-color: #d8e6d8;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: #668866;
+            font-size: 0.85rem;
+        }
+
+        .photo-caption {
+            padding: 8px;
+            font-size: 0.85rem;
+        }
+
+        /* 계산기 스타일 */
+        .calculator {
+            display: grid;
+            grid-template-columns: repeat(4, 1fr);
+            gap: 8px;
+        }
+
+        #calc-display {
+            grid-column: span 4;
+            background-color: var(--primary-bg);
+            border: 1px solid var(--border-color);
+            padding: 12px;
+            font-size: 1.2rem;
+            text-align: right;
+            border-radius: 4px;
+            color: var(--text-color);
+        }
+
+        .calc-btn {
+            background-color: var(--secondary-bg);
+            border: 1px solid var(--border-color);
+            padding: 12px;
+            font-size: 1rem;
+            cursor: pointer;
+            border-radius: 4px;
+            transition: background 0.2s;
+        }
+
+        .calc-btn:hover {
+            background-color: var(--accent-color);
+            color: var(--white);
+        }
+
+        .calc-btn.operator {
+            background-color: #d1e2d1;
+            font-weight: bold;
+        }
+
+        /* 노래 메뉴 스타일 */
+        .music-player {
+            display: flex;
+            flex-direction: column;
+            gap: 10px;
+        }
+
+        .playlist {
+            list-style: none;
+            max-height: 150px;
+            overflow-y: auto;
+            border: 1px solid var(--border-color);
+            border-radius: 4px;
+        }
+
+        .playlist li {
+            padding: 8px 12px;
+            border-bottom: 1px solid var(--border-color);
+            font-size: 0.9rem;
+            cursor: pointer;
+            transition: background 0.2s;
+        }
+
+        .playlist li:hover {
+            background-color: var(--primary-bg);
+        }
+
+        .playlist li.active {
+            background-color: var(--secondary-bg);
+            font-weight: bold;
+            color: var(--accent-hover);
+        }
+
+        audio {
+            width: 100%;
+            margin-top: 5px;
+        }
+    </style>
+</head>
+<body>
+
+    <sidebar>
+        <div class="logo">🌿 VINTAGE & ANTIQUE</div>
+        
+        <div class="menu-section">
+            <div class="menu-title">나라별</div>
+            <ul class="menu-list">
+                <li><a href="#">영국 (UK)</a></li>
+                <li><a href="#">프랑스 (France)</a></li>
+                <li><a href="#">미국 (USA)</a></li>
+                <li><a href="#">북유럽 (Nordic)</a></li>
+            </ul>
+        </div>
+
+        <div class="menu-section">
+            <div class="menu-title">시대별</div>
+            <ul class="menu-list">
+                <li><a href="#">빅토리아 (19세기)</a></li>
+                <li><a href="#">아데코 / 아누보</a></li>
+                <li><a href="#">미드센추리 (1950s)</a></li>
+                <li><a href="#">레트로 (1970-80s)</a></li>
+            </ul>
+        </div>
+
+        <div class="menu-section">
+            <div class="menu-title">종류별</div>
+            <ul class="menu-list">
+                <li><a href="#">찻잔 / 식기류</a></li>
+                <li><a href="#">가구 / 소품</a></li>
+                <li><a href="#">조명 / 캔들홀더</a></li>
+                <li><a href="#">액자 / 페인팅</a></li>
+            </ul>
+        </div>
+    </sidebar>
+
+    <main>
+        <header>
+            <h1 id="page-title">사진 보관함</h1>
+            <span style="font-size: 0.9rem; color: #666;">감성적인 앤틱·빈티지 아카이브 공간</span>
+        </header>
+
+        <div class="content-body">
+            <div>
+                <div class="card">
+                    <h3>📷 등록된 사진 갤러리</h3>
+                    <div class="photo-grid">
+                        <div class="photo-item">
+                            <div class="photo-placeholder">Antique Cup</div>
+                            <div class="photo-caption">영국 찻잔 세트</div>
+                        </div>
+                        <div class="photo-item">
+                            <div class="photo-placeholder">Vintage Lamp</div>
+                            <div class="photo-caption">황동 스탠드</div>
+                        </div>
+                        <div class="photo-item">
+                            <div class="photo-placeholder">Wooden Chair</div>
+                            <div class="photo-caption">프랑스 체어</div>
+                        </div>
+                        <div class="photo-item">
+                            <div class="photo-placeholder">Silver Spoon</div>
+                            <div class="photo-caption">실버 티스푼</div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <div>
+                <div class="card">
+                    <h3>🧮 간편 계산기</h3>
+                    <div class="calculator">
+                        <div id="calc-display">0</div>
+                        <button class="calc-btn" onclick="clearCalc()">C</button>
+                        <button class="calc-btn" onclick="appendCalc('/')">/</button>
+                        <button class="calc-btn" onclick="appendCalc('*')">*</button>
+                        <button class="calc-btn operator" onclick="backspace()">←</button>
+                        
+                        <button class="calc-btn" onclick="appendCalc('7')">7</button>
+                        <button class="calc-btn" onclick="appendCalc('8')">8</button>
+                        <button class="calc-btn" onclick="appendCalc('9')">9</button>
+                        <button class="calc-btn operator" onclick="appendCalc('-')">-</button>
+                        
+                        <button class="calc-btn" onclick="appendCalc('4')">4</button>
+                        <button class="calc-btn" onclick="appendCalc('5')">5</button>
+                        <button class="calc-btn" onclick="appendCalc('6')">6</button>
+                        <button class="calc-btn operator" onclick="appendCalc('+')">+</button>
+                        
+                        <button class="calc-btn" onclick="appendCalc('1')">1</button>
+                        <button class="calc-btn" onclick="appendCalc('2')">2</button>
+                        <button class="calc-btn" onclick="appendCalc('3')">3</button>
+                        <button class="calc-btn operator" onclick="calculate()" style="grid-row: span 2; height: 100%;">=</button>
+                        
+                        <button class="calc-btn" onclick="appendCalc('0')" style="grid-column: span 2;">0</button>
+                        <button class="calc-btn" onclick="appendCalc('.')">.</button>
+                    </div>
+                </div>
+
+                <div class="card">
+                    <h3>🎵 감성 음악 플레이어</h3>
+                    <div class="music-player">
+                        <ul class="playlist">
+                            <li class="active" onclick="changeSong('잔잔한 재즈 라운지')">☕ 1. 잔잔한 재즈 라운지</li>
+                            <li onclick="changeSong('클래식 피아노 연주곡')">🎹 2. 클래식 피아노 연주곡</li>
+                            <li onclick="changeSong('빈티지 어쿠스틱 팝')">🎸 3. 빈티지 어쿠스틱 팝</li>
+                        </ul>
+                        <div style="font-size: 0.85rem; color: #555; margin-top: 5px;" id="current-song-text">재생 중: 잔잔한 재즈 라운지</div>
+                        <audio controls>
+                            <source src="" type="audio/mpeg">
+                            브라우저가 오디오 태그를 지원하지 않습니다.
+                        </audio>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </main>
+
+    <script>
+        // 계산기 기능
+        let calcDisplay = document.getElementById('calc-display');
+        let currentInput = '0';
+
+        function appendCalc(value) {
+            if (currentInput === '0' && value !== '.') {
+                currentInput = value;
+            } else {
+                currentInput += value;
+            }
+            calcDisplay.innerText = currentInput;
+        }
+
+        function clearCalc() {
+            currentInput = '0';
+            calcDisplay.innerText = currentInput;
+        }
+
+        function backspace() {
+            currentInput = currentInput.slice(0, -1);
+            if (currentInput === '') currentInput = '0';
+            calcDisplay.innerText = currentInput;
+        }
+
+        function calculate() {
+            try {
+                currentInput = eval(currentInput).toString();
+                calcDisplay.innerText = currentInput;
+            } catch (error) {
+                calcDisplay.innerText = '오류';
+                currentInput = '0';
+            }
+        }
+
+        // 노래 메뉴 기능
+        function changeSong(songName) {
+            document.getElementById('current-song-text').innerText = "재생 중: " + songName;
+            let items = document.querySelectorAll('.playlist li');
+            items.forEach(item => item.classList.remove('active'));
+            event.target.classList.add('active');
+        }
+
+        // 사이드바 메뉴 클릭 시 상단 제목 변경 효과
+        const menuLinks = document.querySelectorAll('.menu-list a');
+        const pageTitle = document.getElementById('page-title');
+
+        menuLinks.forEach(link => {
+            link.addEventListener('click', (e) => {
+                e.preventDefault();
+                pageTitle.innerText = link.innerText + " 갤러리";
+            });
+        });
+    </script>
+</body>
+</html>
+
+```
+
+### 💡 주요 특징
+
+1. **연한 연두색(Sage Green) 톤앤매너**: 차분하고 감성적인 앤틱·빈티지 분위기에 맞추어 부드러운 연두색과 회색조를 조화롭게 구성했습니다.
+2. **사이드바 분류**: 나라별(영국, 프랑스, 미국, 북유럽), 시대별(빅토리아, 아데코 등), 종류별(찻잔, 가구 등) 카테고리를 직관적으로 배치했습니다.
+3. **간편 계산기**: 골동품이나 소품 거래, 예산 계산 시 편리하게 쓸 수 있도록 기본 사칙연산 계산기를 우측에 포함했습니다.
+4. **음악 메뉴**: 분위기 있는 음악을 감상할 수 있는 플레이어 UI 영역을 구성했습니다.
